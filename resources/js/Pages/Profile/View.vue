@@ -169,34 +169,34 @@ function submitAvatarImage() {
                     <TabList class="flex bg-white">
 
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Posts" :selected="selected"/>
+                            <TabItem text="پست ها " :selected="selected"/>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Followers" :selected="selected"/>
+                            <TabItem text="دنبال کننده ها" :selected="selected"/>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Followings" :selected="selected"/>
+                            <TabItem text="دنبال شونده ها" :selected="selected"/>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Photos" :selected="selected"/>
+                            <TabItem text="عکس ها " :selected="selected"/>
                         </Tab>
                         <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
-                            <TabItem text="My Profile" :selected="selected"/>
+                            <TabItem text="پروفایل من " :selected="selected"/>
                         </Tab>
                     </TabList>
                     <TabPanels class="mt-2">
 
                         <TabPanel class="bg-white p-3 shadow">
-                            Posts
+                            پست ها
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            Followers
+                            دنبال شونده ها
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            Followings
+                            دنبال کننده ها
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            Photos
+                            عکس ها
                         </TabPanel>
                         <TabPanel v-if="isMyProfile">
                             <Edit :must-verify-email="mustVerifyEmail" :status="status"/>

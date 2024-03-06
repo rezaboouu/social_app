@@ -1,5 +1,5 @@
 <script setup>
-import TextInput from "@/Components/TextInput.vue";
+import TextInput from "@/Components/InputTextarea.vue";
 import GroupItem from "@/Components/app/GroupItem.vue";
 import {ref} from "vue";
 const searchKeyword = ref('')
