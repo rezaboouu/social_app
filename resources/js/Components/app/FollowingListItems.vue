@@ -9,51 +9,36 @@ const searchKeyword = ref('')
     <TextInput :model-value="searchKeyword" placeholder="Type to search" class="w-full mt-3"/>
     <div class="mt-3 h-[200px] lg:flex-1 overflow-auto">
         <div v-if="false" class="text-gray-400 text-center p-3">
-            You don't have friends yet.
+           شما فالور ندارید
         </div>
         <div v-else>
             <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
+                           title=" رضا قربان زاده"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
             <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
+                           title=" عباس عزیزی"
+                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>            <FollowingItem image="https://picsum.photos/100"
+                           title=" رضا قربان زاده"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
             <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
+                           title=" عباس عزیزی"
+                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>            <FollowingItem image="https://picsum.photos/100"
+                           title=" رضا قربان زاده"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
             <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
+                           title=" عباس عزیزی"
+                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>            <FollowingItem image="https://picsum.photos/100"
+                           title=" رضا قربان زاده"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
             <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
+                           title=" عباس عزیزی"
+                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>            <FollowingItem image="https://picsum.photos/100"
+                           title=" رضا قربان زاده"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
             <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
+                           title=" عباس عزیزی"
                            description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="John Doe"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
-            <FollowingItem image="https://picsum.photos/100"
-                           title="Elon Musk"
-                           description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."/>
+
         </div>
     </div>
 </template>

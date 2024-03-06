@@ -4,7 +4,7 @@ const post1 = {
     user: {
         id: 1,
         avatar: 'https://randomuser.me/api/portraits/men/79.jpg',
-        name: 'John Smith'
+        name: 'ممد قربانی'
     },
     group: null,
     attachments: [
@@ -28,8 +28,8 @@ const post1 = {
         }
     ],
     body: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
+    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
     `,
     created_at: '2023-11-19 15:12'
 }
@@ -37,15 +37,15 @@ const post2 = {
     user: {
         id: 1,
         avatar: 'https://randomuser.me/api/portraits/men/78.jpg',
-        name: 'James Does'
+        name: 'ممد قربانی '
     },
     group: {
         id: 1,
-        name: 'Laravel Developers'
+        name: 'efdvr'
     },
     body: `
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
-    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Alias aspernatur aut, consequatur cum cupiditate dicta dolores dolorum facere fugit harum labore minima necessitatibus nobis pariatur provident, quia sequi sint voluptatibus.</p>
+<p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
+    <p>لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ و با استفاده از طراحان گرافیک است چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است و برای شرایط فعلی تکنولوژی مورد نیاز</p>
     `,
     created_at: '2023-11-19 15:12'
 }
