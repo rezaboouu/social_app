@@ -12,7 +12,7 @@ function isImage(attachment) {
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex items-center gap-2 mb-3">
             <a href="javascript:void(0)">
-                <img :src="post.user.avatar"
+                <img :src="post.user.avatar_url"
                      class="w-[40px] rounded-full border border-2 transition-all hover:border-blue-500"/>
             </a>
             <div>
@@ -23,20 +23,22 @@ function isImage(attachment) {
                         <a href="javascript:void(0)" class="hover:underline">{{ post.group.name }}</a>
                     </template>
                 </h4>
-                <small class="text-gray-400">{{ post.created_at }}</small>
+                <small class="text-gray-400">{{  post.created_at  }}</small>
             </div>
         </div>
         <div class="mb-3">
             <Disclosure v-slot="{ open }">
-                <div v-if="!open" v-html="post.body.substring(0, 200)"/>
-                <DisclosurePanel>
+                <div v-if="!open || post.body.length <= 200" v-html="post.body.substring(0, 200)"/>
+                <template v-if="post.body.length > 1000">
+                    <DisclosurePanel>
                     <div v-html="post.body"/>
                 </DisclosurePanel>
-                <div class="flex justify-end">
-                    <DisclosureButton class="text-blue-500 hover:underline">
-                        {{ open ? 'Read less' : 'Read More' }}
-                    </DisclosureButton>
-                </div>
+                    <div class="flex justify-end">
+                        <DisclosureButton class="text-blue-500 hover:underline">
+                            {{ open ? 'بستن ادامه بیشتر' : 'ادامه بیشتر' }}
+                        </DisclosureButton>
+                    </div>
+                </template>
             </Disclosure>
         </div>
         <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
