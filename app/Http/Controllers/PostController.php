@@ -6,6 +6,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -43,6 +44,14 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $id = Auth::id();
+
+        if ($post->user_id !== $id) {
+            return response("شما دسترسی برای حذف پست را ندارید ", 403);
+        }
+
+        $post->delete();
+
+        return back();
     }
 }
