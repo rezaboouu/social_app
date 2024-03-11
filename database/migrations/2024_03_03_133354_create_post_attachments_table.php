@@ -19,6 +19,8 @@ return new class extends Migration
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('post_id')->constrained('posts');
             $table->timestamp("created_at")->nullable();
+            $table->timestamp("updated_at")->nullable();
+
         });
     }
 
