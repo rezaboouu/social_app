@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/post/download/{attachment}', [PostController::class, 'downloadAttachment'])
         ->name('post.download');
+
 });
 
 require __DIR__  .'/auth.php';
