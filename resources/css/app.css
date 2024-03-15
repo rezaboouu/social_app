@@ -95,6 +95,9 @@
     padding-left: 1.5em;
     padding-right: 1.5em;
 }
+.ck-content-output > *:last-child {
+    margin-bottom: 0;
+}
 
 .ck-content-output a {
     text-decoration: #4b9afa;

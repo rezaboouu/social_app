@@ -2,14 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Enums\PostReactionEnum;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\PostAttachment;
 use App\Models\Post;
+use App\Http\Resources\CommentResource;
+use App\Models\Comment;
+use App\Models\PostReaction;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use App\Http\Requests\UpdateCommentRequest;
 
 class PostController extends Controller
 {
@@ -133,5 +139,67 @@ class PostController extends Controller
         // TODO check if user has permission to download that attachment
 
         return response()->download(Storage::disk('public')->path($attachment->path), $attachment->name);
+    }
+    public function postReaction(Request $request, Post $post)
+    {
+        $data = $request->validate([
+            'reaction' => [Rule::enum(PostReactionEnum::class)]
+        ]);
+
+        $userId = Auth::id();
+        $reaction = PostReaction::where('user_id', $userId)->where('post_id', $post->id)->first();
+
+        if ($reaction) {
+            $hasReaction = false;
+            $reaction->delete();
+        } else {
+            $hasReaction = true;
+            PostReaction::create([
+                'post_id' => $post->id,
+                'user_id' => $userId,
+                'type' => $data['reaction']
+            ]);
+        }
+
+        $reactions = PostReaction::where('post_id', $post->id)->count();
+
+        return response([
+            'num_of_reactions' => $reactions,
+            'current_user_has_reaction' => $hasReaction
+        ]);
+    }
+    public function createComment(Request $request, Post $post)
+    {
+        $data = $request->validate([
+            'comment' => ['required']
+        ]);
+
+        $comment = Comment::create([
+            'post_id' => $post->id,
+            'comment' => nl2br($data['comment']),
+            'user_id' => Auth::id()
+        ]);
+
+        return response(new CommentResource($comment), 201);
+    }
+    public function deleteComment(Comment $comment)
+    {
+        if ($comment->user_id !== Auth::id()) {
+            return response("You don't have permission to delete this comment.", 403);
+        }
+
+        $comment->delete();
+        return response('', 204);
+    }
+
+    public function updateComment(UpdateCommentRequest $request, Comment $comment)
+    {
+        $data = $request->validated();
+
+        $comment->update([
+            'comment' => nl2br($data['comment'])
+        ]);
+
+        return new CommentResource($comment);
     }
 }
