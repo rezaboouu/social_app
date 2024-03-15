@@ -1,5 +1,5 @@
 <script setup>
-import {computed,  ref, watch} from 'vue'
+import {computed, onMounted, onUpdated, reactive, ref, watch} from 'vue'
 import {XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
 import {
     TransitionRoot,
@@ -8,8 +8,9 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
+import InputTextarea from "@/Components/InputTextarea.vue";
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
-import {useForm, usePage} from "@inertiajs/vue3";
+import {useForm} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage} from "@/helpers.js";
 
@@ -24,8 +25,6 @@ const props = defineProps({
     },
     modelValue: Boolean
 })
-
-const attachmentExtensions = usePage().props.attachmentExtensions;
 /**
  * {
  *     file: File,
@@ -34,9 +33,6 @@ const attachmentExtensions = usePage().props.attachmentExtensions;
  * @type {Ref<UnwrapRef<*[]>>}
  */
 const attachmentFiles = ref([])
-
-const attachmentErrors = ref([])
-const formErrors = ref({});
 
 const form = useForm({
     body: '',
@@ -51,18 +47,6 @@ const show = computed({
 const computedAttachments = computed(() => {
     return [...attachmentFiles.value, ...(props.post.attachments || [])]
 })
-
-const showExtensionsText = computed(() => {
-    for (let myFile of attachmentFiles.value) {
-        const file = myFile.file
-        let parts = file.name.split('.')
-        let ext = parts.pop().toLowerCase()
-        if (!attachmentExtensions.includes(ext)) {
-            return true
-        }
-    }
-    return false;
-})
 const emit = defineEmits(['update:modelValue', 'hide'])
 
 watch(() => props.post, () => {
@@ -74,19 +58,11 @@ function closeModal() {
     emit('hide')
     resetModal();
 }
-
-
-function resetModal() {
+function resetModal(){
     form.reset()
-    formErrors.value = {}
     attachmentFiles.value = []
-    attachmentErrors.value = [];
-    if (props.post.attachments) {
-        props.post.attachments.forEach(file => file.deleted = false)
-    }
+    props.post.attachments.forEach(file => file.deleted = false)
 }
-
-
 function submit(){
     form.attachments = attachmentFiles.value.map(myFile => myFile.file)
     console.log(form)
@@ -94,35 +70,21 @@ function submit(){
         form._method = 'PUT'
         form.post(route('post.update', props.post.id), {
             preserveScroll: true,
-            onSuccess: (res) => {
+            onSuccess: () => {
                 closeModal()
-            },
-            onError: (errors) => {
-                processErrors(errors)
             }
         })
     } else {
         form.post(route('post.create'), {
             preserveScroll: true,
-            onSuccess: (res) => {
+            onSuccess: () => {
                 closeModal()
-            },
-            onError: (errors) => {
-                processErrors(errors)
             }
         })
     }
 }
-function processErrors(errors) {
-    formErrors.value = errors
-    for (const key in errors) {
-        if (key.includes('.')) {
-            const [, index] = key.split('.')
-            attachmentErrors.value[index] = errors[key]
-        }
-    }
-}
 async function onAttachmentChoose($event) {
+    console.log($event.target.files)
     for (const file of $event.target.files) {
         const myFile = {
             file,
@@ -131,6 +93,7 @@ async function onAttachmentChoose($event) {
         attachmentFiles.value.push(myFile)
     }
     $event.target.value = null;
+    console.log(attachmentFiles.value)
 }
 async function readFile(file) {
     return new Promise((res, rej) => {
@@ -154,7 +117,7 @@ function removeFile(myFile) {
         myFile.deleted = true
     }
 }
-function undoDelete (myFile){
+function undoDelete(myFile){
     myFile.deleted = false;
     form.deleted_file_ids = form.deleted_file_ids.filter(id => myFile.id !== id)
 }
@@ -204,26 +167,20 @@ function undoDelete (myFile){
                                 <div class="p-4">
                                     <PostUserHeader :post="post" :show-time="false" class="mb-4"/>
                                     <ckeditor :editor="editor" v-model="form.body" :config="editorConfig"></ckeditor>
-                                    <div v-if="showExtensionsText" class="border-l-4 border-amber-500 py-2 px-3 bg-amber-100 mt-3 text-gray-800">
-                                        Files must be one of the following extensions <br>
-                                        <small>{{attachmentExtensions.join(', ')}}</small>
-                                    </div>
-                                    <div v-if="formErrors.attachments" class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
-                                        {{formErrors.attachments}}
-                                    </div>
+
                                     <div class="grid gap-3 my-3" :class="[
                                         computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
                                     ]">
-                                        <div v-for="(myFile, ind) of computedAttachments">
+                                        <template v-for="(myFile, ind) of computedAttachments">
 
                                             <div
-                                                class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative border-2"
-                                                :class="attachmentErrors[ind] ? 'border-red-500' : ''">
-                                                <div v-if="myFile.deleted"  class="absolute z-10 left-0 bottom-0 right-0 py-2 px-3 text-sm bg-black text-white flex justify-between items-center">
-                                                    این عکس حذف بشه!
+                                                class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
 
-                                                    <ArrowUturnLeftIcon @click="undoDelete(myFile)"
-                                                                        class="w-4 h-4 cursor-pointer"/>                                                </div>
+                                                <div v-if="myFile.deleted" class="absolute z-10 left-0 bottom-0 right-0 py-2 px-3 text-sm bg-black text-white flex justify-between items-center">
+                                                    To be deleted
+
+                                                    <ArrowUturnLeftIcon @click="undoDelete(myFile)"  class="w-4 h-4 cursor-pointer" />
+                                                </div>
                                                 <button
                                                     @click="removeFile(myFile) "
                                                     class="absolute z-20 right-3 top-3 w-7 h-7 flex items-center justify-center bg-black/30 text-white rounded-full hover:bg-black/40">
@@ -234,7 +191,7 @@ function undoDelete (myFile){
                                                      :src="myFile.url"
                                                      class="object-contain aspect-square"
                                                      :class="myFile.deleted ? 'opacity-50' : ''"/>
-                                                <div v-else class="flex flex-col justify-center px-3  items-center"
+                                                <div v-else class="flex flex-col justify-center items-center"
                                                      :class="myFile.deleted ? 'opacity-50' : ''">
                                                     <PaperClipIcon class="w-10 h-10 mb-3"/>
 
@@ -243,8 +200,7 @@ function undoDelete (myFile){
                                                     </small>
                                                 </div>
                                             </div>
-                                            <small class="text-red-500">{{ attachmentErrors[ind] }}</small>
-                                        </div>
+                                        </template>
                                     </div>
 
                                 </div>
@@ -253,7 +209,7 @@ function undoDelete (myFile){
                                     <button
                                         type="button"
                                         class="flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full relative"
-
+                                        @click="submit"
                                     >
                                         <PaperClipIcon class="w-4 h-4 mr-2"/>
                                         اضافه کردن فایل
@@ -263,7 +219,6 @@ function undoDelete (myFile){
                                     <button
                                         type="button"
                                         class="flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
-                                        @click="submit"
                                     >
                                         <BookmarkIcon class="w-4 h-4 mr-2"/>
                                         ارسال

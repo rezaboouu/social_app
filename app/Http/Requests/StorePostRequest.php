@@ -4,17 +4,9 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\File;
-use Illuminate\Http\UploadedFile;
 
 class StorePostRequest extends FormRequest
 {
-
-    public static array $extensions = [
-        'jpg', 'jpeg', 'png', 'gif', 'webp',
-        'mp3', 'wav', 'mp4',
-        "doc", "docx", "pdf", "csv", "xls", "xlsx",
-        "zip"
-    ];
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -34,34 +26,20 @@ class StorePostRequest extends FormRequest
 
             'user_id'=>['numeric'],
             'body' => ['nullable', 'string'],
-            'attachments' => [
-                'array',
-                'max:50',
-                function ($attribute, $value, $fail) {
-                    // Custom rule to check the total size of all files
-                    $totalSize = collect($value)->sum(fn(UploadedFile $file) => $file->getSize());
-
-                    if ($totalSize > 1 * 1024 * 1024 * 1024) {
-                        $fail('The total size of all files must not exceed 1GB.');
-                    }
-                },
-            ],
+            'attachments' => 'array|max:50',
             'attachments.*' => [
                 'file',
-                File::types(self::$extensions),
+                File::types([
+                    'jpg', 'jpeg', 'png', 'gif', 'webp',
+                    'mp3', 'wav', 'mp4',
+                    "doc", "docx", "pdf", "csv", "xls", "xlsx",
+                    "zip"
+                ])->max(500 * 1024 * 1024)
             ],
         ];
     }
     protected function prepareForValidation()
     {
         $this->merge(['user_id' => auth()->user()->id]);
-    }
-
-    public function messages()
-    {
-        return [
-            'attachments.*.file' => 'Each attachment must be a file.',
-            'attachments.*.mimes' => 'Invalid file type for attachments.'
-        ];
     }
 }
