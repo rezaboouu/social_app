@@ -5,6 +5,7 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GroupController;
 use Inertia\Inertia;
 
 /*
@@ -65,6 +66,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/comment/{comment}/reaction', [PostController::class, 'commentReaction'])
         ->name('comment.reaction');
+
+
+    // Groups
+
+    Route::post('/group', [GroupController::class, 'store'])
+        ->name('group.create');
 });
 
 require __DIR__  .'/auth.php';
