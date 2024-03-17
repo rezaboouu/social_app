@@ -26,6 +26,7 @@ class GroupController extends Controller
      */
     public function store(StoreGroupRequest $request)
     {
+        dd($request);
         $data = $request->validated();
         $data['user_id'] = Auth::id();
         $group = Group::create($data);
@@ -34,6 +35,7 @@ class GroupController extends Controller
             'status' => GroupUserStatus::APPROVED->value,
             'role' => GroupUserRole::ADMIN->value,
             'user_id' => Auth::id(),
+            'auto_approval' => 1,
             'group_id' => $group->id,
             'created_by' => Auth::id()
         ];

@@ -10,7 +10,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class Group extends Model
 {
-    use HasFactory,SoftDeletes,HasSlug;
+    use HasFactory;
+    use SoftDeletes;
+    use HasSlug;
     protected $fillable = ['name', 'user_id', 'auto_approval', 'about'];
 
     public function getSlugOptions(): SlugOptions

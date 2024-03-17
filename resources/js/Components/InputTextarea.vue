@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref,watch} from 'vue';
+import {onMounted, ref, watch} from 'vue';
 
 const props = defineProps({
     modelValue: {
@@ -12,19 +12,24 @@ const props = defineProps({
         default: true
     }
 });
+
+const emit = defineEmits(['update:modelValue']);
+
+const input = ref(null);
+
+onMounted(() => {
+    if (input.value.hasAttribute('autofocus')) {
+        input.value.focus();
+    }
+});
+
 watch(() => props.modelValue, () => {
     console.log("Changed")
     setTimeout(() => {
         adjustHeight()
     }, 10)
 })
-const emit = defineEmits(['update:modelValue']);
-const input = ref(null);
-onMounted(() => {
-    if (input.value.hasAttribute('autofocus')) {
-        input.value.focus();
-    }
-});
+
 defineExpose({focus: () => input.value.focus()});
 
 function onInputChange($event) {
@@ -34,7 +39,8 @@ function onInputChange($event) {
 function adjustHeight() {
     if (props.autoResize) {
         input.value.style.height = 'auto';
-        input.value.style.height = (input.value.scrollHeight + 1) + 'px';    }
+        input.value.style.height = (input.value.scrollHeight + 1) + 'px';
+    }
 }
 
 onMounted(() => {
