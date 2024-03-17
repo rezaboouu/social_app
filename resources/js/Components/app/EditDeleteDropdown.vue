@@ -2,11 +2,17 @@
 import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from "@heroicons/vue/20/solid/index.js";
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
 import {usePage} from "@inertiajs/vue3";
+
 defineProps({
     user: Object
 })
+
 const authUser = usePage().props.auth.user;
+
+
+
 defineEmits(['edit', 'delete'])
+
 </script>
 
 <template>
@@ -47,7 +53,7 @@ defineEmits(['edit', 'delete'])
                                 class="mr-2 h-5 w-5"
                                 aria-hidden="true"
                             />
-                            Edit
+                            ویرایش
                         </button>
                     </MenuItem>
                     <MenuItem v-if="user.id === authUser.id" v-slot="{ active }">
@@ -62,7 +68,7 @@ defineEmits(['edit', 'delete'])
                                 class="mr-2 h-5 w-5"
                                 aria-hidden="true"
                             />
-                            Delete
+                            پاک کردن
                         </button>
                     </MenuItem>
                 </div>
