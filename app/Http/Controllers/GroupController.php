@@ -144,8 +144,7 @@ class GroupController extends Controller
             'group_id' => $group->id,
             'created_by' => Auth::id(),
         ]);
-       // Notification::sendNow($user , new InvitationInGroup($group, $hours, $token));
-//        $user->notify(new InvitationInGroup($group, $hours, $token));
+        $user->notify(new InvitationInGroup($group, $hours, $token));
 
 
         return back()->with('success', 'User was invited to join to group');
