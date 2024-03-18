@@ -26,7 +26,6 @@ class GroupController extends Controller
      */
     public function store(StoreGroupRequest $request)
     {
-        dd($request);
         $data = $request->validated();
         $data['user_id'] = Auth::id();
         $group = Group::create($data);
@@ -42,7 +41,7 @@ class GroupController extends Controller
 
         GroupUser::create($groupUserData);
 
-        return response(new GroupResource($group), 201);
+        
     }
 
     /**

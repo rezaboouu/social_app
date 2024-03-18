@@ -37,11 +37,22 @@ function resetModal() {
     formErrors.value = {}
 }
 function submit() {
-    axiosClient.post(route('group.create'), form)
-        .then(res => {
+    form.post(route('group.create'), {
+        onSuccess(res){
             console.log(res)
             closeModal()
-        })
+        },
+        onError(res){
+            console.log(res)
+        }
+    })
+
+
+    // axiosClient.post(route('group.create'), form)
+    //     .then(res => {
+    //         console.log(res)
+    //         closeModal()
+    //     })
 }
 </script>
 
