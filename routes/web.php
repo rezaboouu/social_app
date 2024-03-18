@@ -24,11 +24,14 @@ Route::get('/', [HomeController::class, 'index'])
 
 
 Route::get('/u/{user:username}', [ProfileController::class, 'index'])
-
     ->name('profile');
+
+Route::get('/g/{group:slug}', [GroupController::class, 'profile'])
+    ->name('group.profile');
 
 
 Route::middleware('auth')->group(function () {
+
 
     Route::post('/profile/update-images', [ProfileController::class, 'updateImage'])
         ->name('profile.updateImages');
@@ -72,6 +75,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/group', [GroupController::class, 'store'])
         ->name('group.create');
+
+    Route::post('/group/update-images/{group:slug}', [GroupController::class, 'updateImage'])
+        ->name('group.updateImages');
 });
 
 require __DIR__  .'/auth.php';
