@@ -92,6 +92,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/group/approve-request/{group:slug}', [GroupController::class, 'approveRequest'])
         ->name('group.approveRequest');
 
+        Route::post('/group/change-role/{group:slug}', [GroupController::class, 'changeRole'])
+        ->name('group.changeRole');
+
+
 });
 
 require __DIR__  . '/auth.php';

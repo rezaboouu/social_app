@@ -21,6 +21,11 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use PhpParser\Node\Stmt\GroupUse;
+use App\Http\Resources\GroupUserResource;
+use App\Models\User;
+use App\Notifications\RoleChanged;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class GroupController extends Controller
@@ -32,12 +37,17 @@ class GroupController extends Controller
     {
         $group->load('currentUserGroup');
 
-        $users = $group->approvedUsers()->orderBy('name')->get();
+        $users = User::query()
+            ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
+            ->join('group_users AS gu', 'gu.user_id', 'users.id')
+            ->orderBy('users.name')
+            ->where('group_id', $group->id)
+            ->get();
         $requests = $group->pendingUsers()->orderBy('name')->get();
         return Inertia::render('Group/View', [
             'success' => session('success'),
             'group' => new GroupResource($group),
-            'users' => UserResource::collection($users),
+            'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($requests)
         ]);
     }
@@ -65,18 +75,16 @@ class GroupController extends Controller
 
     /**
      * Display the specified resource.
-     */
-    public function show(Group $group)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(UpdateGroupRequest $request, Group $group)
     {
-        //
+        $group->update($request->validated());
+
+        return back()->with('success', "Group was updated");
     }
 
     /**
@@ -227,5 +235,34 @@ class GroupController extends Controller
         }
 
         return back();
+    }
+    public function changeRole(Request $request, Group $group)
+    {
+        if (!$group->isAdmin(Auth::id())) {
+            return response("You don't have permission to perform this action", 403);
+        }
+
+        $data = $request->validate([
+            'user_id' => ['required'],
+            'role' => ['required', Rule::enum(GroupUserRole::class)]
+        ]);
+
+        $user_id = $data['user_id'];
+        if ($group->isOwner($user_id)) {
+            return response("You can't change role of the owner of the group", 403);
+        }
+
+        $groupUser = GroupUser::where('user_id', $user_id)
+            ->where('group_id', $group->id)
+            ->first();
+
+        if ($groupUser) {
+            $groupUser->role = $data['role'];
+            $groupUser->save();
+
+            $groupUser->user->notify(new RoleChanged($group, $data['role']));
+
+            return back();
+        }
     }
 }
