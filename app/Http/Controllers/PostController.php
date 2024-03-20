@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Notifications\CommentDeleted;
+use App\Notifications\PostDeleted;
 
 class PostController extends Controller
 {

@@ -39,6 +39,14 @@ class Group extends Model
             ->where('role', GroupUserRole::ADMIN->value)
             ->exists();
     }
+    public function hasApprovedUser($userId): bool
+    {
+        return GroupUser::query()
+            ->where('user_id', $userId)
+            ->where('group_id', $this->id)
+            ->where('status', GroupUserStatus::APPROVED->value)
+            ->exists();
+    }
     public function adminUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'group_users')

@@ -15,6 +15,7 @@ use App\Notifications\InvitationInGroup;
 use App\Notifications\RequestToJoinGroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Http\Resources\PostResource;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +23,7 @@ use Illuminate\Support\Str;
 use Inertia\Inertia;
 use PhpParser\Node\Stmt\GroupUse;
 use App\Http\Resources\GroupUserResource;
+use App\Models\Post;
 use App\Models\User;
 use App\Notifications\RoleChanged;
 use Illuminate\Validation\Rule;
@@ -33,9 +35,29 @@ class GroupController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function profile(Group $group)
+    public function profile(Request $request,Group $group)
     {
         $group->load('currentUserGroup');
+        $userId = Auth::id();
+
+        if ($group->hasApprovedUser($userId)) {
+            $posts = Post::postsForTimeline($userId)
+                ->where('group_id', $group->id)
+                ->paginate(10);
+            $posts = PostResource::collection($posts);
+        } else {
+            return Inertia::render('Group/View', [
+                'success' => session('success'),
+                'group' => new GroupResource($group),
+                'posts' => null,
+                'users' => [],
+                'requests' => []
+            ]);
+        }
+
+        if ($request->wantsJson()) {
+            return PostResource::collection($posts);
+        }
 
         $users = User::query()
             ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
@@ -47,6 +69,7 @@ class GroupController extends Controller
         return Inertia::render('Group/View', [
             'success' => session('success'),
             'group' => new GroupResource($group),
+            'posts' => $posts,
             'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($requests)
         ]);
