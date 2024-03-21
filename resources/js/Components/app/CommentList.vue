@@ -122,7 +122,10 @@ function onCommentDelete(comment) {
                         <small class="text-xs text-gray-400">{{ comment.updated_at }}</small>
                     </div>
                 </div>
-                <EditDeleteDropdown :user="comment.user" @edit="startCommentEdit(comment)"
+                <EditDeleteDropdown :user="comment.user"
+                                    :post="post"
+                                    :comment="comment"
+                                    @edit="startCommentEdit(comment)"
                                     @delete="deleteComment(comment)"/>
             </div>
             <div class="pl-12">
@@ -162,7 +165,8 @@ function onCommentDelete(comment) {
                                      :data="{comments: comment.comments}"
                                      :parent-comment="comment"
                                      @comment-create="onCommentCreate"
-                                     @comment-delete="onCommentDelete"/>                    </DisclosurePanel>
+                                     @comment-delete="onCommentDelete"/>
+                    </DisclosurePanel>
                 </Disclosure>
             </div>
         </div>
