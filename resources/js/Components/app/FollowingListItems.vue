@@ -3,6 +3,10 @@ import TextInput from "@/Components/InputTextarea.vue";
 import UserListItem from "@/Components/app/UserListItem.vue";
 import {ref} from "vue";
 const searchKeyword = ref('')
+
+defineProps({
+    users: Array
+})
 </script>
 
 <template>
@@ -12,7 +16,10 @@ const searchKeyword = ref('')
            شما فالور ندارید
         </div>
         <div v-else>
-
+            <UserListItem v-for="user of users"
+                          :user="user"
+                          :key="user.id"
+                          class="rounded-lg"/>
 
         </div>
     </div>

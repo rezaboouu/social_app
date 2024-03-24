@@ -11,9 +11,11 @@ use App\Models\Post;
 use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use App\Models\Reaction;
+use App\Notifications\PostCreated;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use App\Http\Requests\UpdateCommentRequest;
@@ -31,12 +33,10 @@ class PostController extends Controller
     {
         $data = $request->validated();
         $user = $request->user();
-
         DB::beginTransaction();
         $allFilePaths = [];
         try {
             $post = Post::create($data);
-
             /** @var \Illuminate\Http\UploadedFile[] $files */
             $files = $data['attachments'] ?? [];
             foreach ($files as $file) {
@@ -51,8 +51,16 @@ class PostController extends Controller
                     'created_by' => $user->id
                 ]);
             }
-
             DB::commit();
+            $group = $post->group;
+            if ($group) {
+                $users = $group->approvedUsers()->where('users.id', '!=', $user->id)->get();
+                Notification::send($users, new PostCreated($post, $group));
+            }
+
+            $followers = $user->followers;
+            Notification::send($followers, new PostCreated($post, $user, null));
+
         } catch (\Exception $e) {
             foreach ($allFilePaths as $path) {
                 Storage::disk('public')->delete($path);
@@ -60,10 +68,7 @@ class PostController extends Controller
             DB::rollBack();
             throw $e;
         }
-
-
         return back();
-
     }
 
 
