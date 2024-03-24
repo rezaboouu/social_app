@@ -8,6 +8,7 @@ import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import Edit from "@/Pages/Profile/Edit.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {useForm} from '@inertiajs/vue3'
+import DangerButton from "@/Components/DangerButton.vue";
 const imagesForm = useForm({
     avatar: null,
     cover: null,
@@ -28,6 +29,8 @@ const props = defineProps({
     success: {
         type: String,
     },
+    isCurrentUserFollower: Boolean,
+    followerCount: Number,
     user: {
         type: Object
     }
@@ -42,7 +45,6 @@ function onCoverChange(event) {
         reader.readAsDataURL(imagesForm.cover)
     }
 }
-
 function onAvatarChange(event) {
     imagesForm.avatar = event.target.files[0]
     if (imagesForm.avatar) {
@@ -62,7 +64,6 @@ function resetAvatarImage() {
     avatarImageSrc.value = null
 }
 function submitCoverImage() {
-
     imagesForm.post(route('profile.updateImages'), {
         preserveScroll: true,
         onSuccess: (user) => {
@@ -84,6 +85,14 @@ function submitAvatarImage() {
                 showNotification.value = false
             }, 3000)
         },
+    })
+}
+function followUser() {
+    const form = useForm({
+        follow: !props.isCurrentUserFollower
+    })
+    form.post(route('user.follow', props.user.id), {
+        preserveScroll: true
     })
 }
 </script>
@@ -164,7 +173,19 @@ function submitAvatarImage() {
                         </div>
                     </div>
                     <div class="flex justify-between items-center flex-1 p-4">
-                        <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                        <div>
+                            <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                            <p class="text-xs text-gray-500">{{followerCount}} follower(s)</p>
+                        </div>
+
+                        <div>
+                            <PrimaryButton v-if="!isCurrentUserFollower" @click="followUser">
+                                Follow User
+                            </PrimaryButton>
+                            <DangerButton v-else @click="followUser">
+                                Unfollow User
+                            </DangerButton>
+                        </div>
                     </div>
                 </div>
             </div>
