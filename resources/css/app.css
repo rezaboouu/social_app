@@ -116,3 +116,8 @@
 .comment-list::-webkit-scrollbar-track {
     background-color: #f1f1f3; /* Track color */
 }
+
+.ck-content-output a.hashtag {
+    background-color: #eaf4ff;
+    color: #4156e2;
+}
