@@ -28,6 +28,8 @@ use App\Models\Post;
 use App\Models\User;
 use App\Notifications\RoleChanged;
 use Illuminate\Validation\Rule;
+use App\Http\Resources\PostAttachmentResource;
+use App\Models\PostAttachment;
 use Illuminate\Validation\Rules\Enum;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
@@ -67,12 +69,23 @@ class GroupController extends Controller
             ->where('group_id', $group->id)
             ->get();
         $requests = $group->pendingUsers()->orderBy('name')->get();
+
+        $photos = PostAttachment::query()
+            ->select('post_attachments.*')
+            ->join('posts AS p', 'p.id', 'post_attachments.post_id')
+            ->where('p.group_id', $group->id)
+            ->where('mime', 'like', 'image/%')
+            ->latest()
+            ->get();
+
+//        dd($photos->toSql());
         return Inertia::render('Group/View', [
             'success' => session('success'),
             'group' => new GroupResource($group),
             'posts' => $posts,
             'users' => GroupUserResource::collection($users),
-            'requests' => UserResource::collection($requests)
+            'requests' => UserResource::collection($requests),
+            'photos' => PostAttachmentResource::collection($photos)
         ]);
     }
 

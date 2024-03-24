@@ -1,4 +1,5 @@
 <script setup>
+
 import {computed, ref} from 'vue'
 import {XMarkIcon, CheckCircleIcon, CameraIcon} from '@heroicons/vue/24/solid'
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
@@ -13,6 +14,8 @@ import TextInput from "@/Components/TextInput.vue";
 import GroupForm from "@/Components/app/GroupForm.vue";
 import PostList from "@/Components/app/PostList.vue";
 import CreatePost from "@/Components/app/CreatePost.vue";
+import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
+
 const imagesForm = useForm({
     thumbnail: null,
     cover: null,
@@ -35,7 +38,8 @@ const props = defineProps({
     },
     posts: Object,
     users: Array,
-    requests: Array
+    requests: Array,
+    photos: Array
 });
 const aboutForm = useForm({
     name: usePage().props.group.name,
@@ -303,7 +307,7 @@ function updateGroup() {
                             </div>
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            Photos
+                            <TabPhotos :photos="photos" />
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
                             <template v-if="isCurrentUserAdmin">
