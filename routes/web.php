@@ -63,6 +63,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/post/{post}/comment', [PostController::class, 'createComment'])
         ->name('post.comment.create');
 
+
+    Route::get('/post/{post}', [PostController::class, 'view'])
+        ->name('post.view');
+
+
     Route::delete('/comment/{comment}', [PostController::class, 'deleteComment'])
         ->name('comment.delete');
 
@@ -78,7 +83,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/group', [GroupController::class, 'store'])
         ->name('group.create');
-        
+
     Route::put('/group/{group:slug}', [GroupController::class, 'update'])
         ->name('group.update');
 
@@ -95,8 +100,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/group/approve-request/{group:slug}', [GroupController::class, 'approveRequest'])
         ->name('group.approveRequest');
 
-        Route::post('/group/change-role/{group:slug}', [GroupController::class, 'changeRole'])
+    Route::post('/group/change-role/{group:slug}', [GroupController::class, 'changeRole'])
         ->name('group.changeRole');
+
+    Route::delete('/group/remove-user/{group:slug}', [GroupController::class, 'removeUser'])
+        ->name('group.removeUser');
+
+
 
 
 });

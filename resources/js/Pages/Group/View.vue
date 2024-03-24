@@ -13,7 +13,6 @@ import TextInput from "@/Components/TextInput.vue";
 import GroupForm from "@/Components/app/GroupForm.vue";
 import PostList from "@/Components/app/PostList.vue";
 import CreatePost from "@/Components/app/CreatePost.vue";
-
 const imagesForm = useForm({
     thumbnail: null,
     cover: null,
@@ -43,13 +42,6 @@ const aboutForm = useForm({
     auto_approval: !!parseInt(usePage().props.group.auto_approval),
     about: usePage().props.group.about
 })
-
-function updateGroup(){
-    aboutForm.put(route('group.update', props.group.slug), {
-        preserveScroll: true
-    })
-}
-
 function onCoverChange(event) {
     imagesForm.cover = event.target.files[0]
     if (imagesForm.cover) {
@@ -60,7 +52,6 @@ function onCoverChange(event) {
         reader.readAsDataURL(imagesForm.cover)
     }
 }
-
 function onThumbnailChange(event) {
     imagesForm.thumbnail = event.target.files[0]
     if (imagesForm.thumbnail) {
@@ -71,17 +62,14 @@ function onThumbnailChange(event) {
         reader.readAsDataURL(imagesForm.thumbnail)
     }
 }
-
 function resetCoverImage() {
     imagesForm.cover = null;
     coverImageSrc.value = null
 }
-
 function resetThurmbnailImage() {
     imagesForm.thumbnail = null;
     thumbnailImageSrc.value = null
 }
-
 function submitCoverImage() {
     imagesForm.post(route('group.updateImages', props.group.slug), {
         preserveScroll: true,
@@ -94,7 +82,6 @@ function submitCoverImage() {
         },
     })
 }
-
 function submitThurmbnailImage() {
     imagesForm.post(route('group.updateImages', props.group.slug), {
         preserveScroll: true,
@@ -107,14 +94,12 @@ function submitThurmbnailImage() {
         },
     })
 }
-
 function joinToGroup() {
     const form = useForm({})
     form.post(route('group.join', props.group.slug), {
         preserveScroll: true
     })
 }
-
 function approveUser(user) {
     const form = useForm({
         user_id: user.id,
@@ -124,7 +109,6 @@ function approveUser(user) {
         preserveScroll: true
     })
 }
-
 function rejectUser(user) {
     const form = useForm({
         user_id: user.id,
@@ -134,7 +118,18 @@ function rejectUser(user) {
         preserveScroll: true
     })
 }
-
+function deleteUser(user) {
+    console.log("111")
+    if (!window.confirm(`Are you sure you want to remove user "${user.name}" from this group?`)) {
+        return false;
+    }
+    const form = useForm({
+        user_id: user.id,
+    })
+    form.delete(route('group.removeUser', props.group.slug), {
+        preserveScroll: true
+    })
+}
 function onRoleChange(user, role) {
     console.log(user, role)
     const form = useForm({
@@ -142,6 +137,11 @@ function onRoleChange(user, role) {
         role
     })
     form.post(route('group.changeRole', props.group.slug), {
+        preserveScroll: true
+    })
+}
+function updateGroup() {
+    aboutForm.put(route('group.update', props.group.slug), {
         preserveScroll: true
     })
 }
@@ -278,11 +278,11 @@ function onRoleChange(user, role) {
                                 <UserListItem v-for="user of users"
                                               :user="user"
                                               :key="user.id"
-                                             
-                                :show-role-dropdown="isCurrentUserAdmin"
-                                :disable-role-dropdown="group.user_id === user.id"
-                                class="shadow rounded-lg"
-                                @role-change="onRoleChange"/>
+                                              :show-role-dropdown="isCurrentUserAdmin"
+                                              :disable-role-dropdown="group.user_id === user.id"
+                                              class="shadow rounded-lg"
+                                              @role-change="onRoleChange"
+                                              @delete="deleteUser"/>
                             </div>
                         </TabPanel>
                         <TabPanel v-if="isCurrentUserAdmin" class="">
@@ -291,10 +291,9 @@ function onRoleChange(user, role) {
                                               :user="user"
                                               :key="user.id"
                                               :for-approve="true"
-                                              :show-role-dropdown="isCurrentUserAdmin"
-                                              :disable-role-dropdown="group.user_id === user.id"
                                               class="shadow rounded-lg"
-                                              @role-change="onRoleChange"/>
+                                              @approve="approveUser"
+                                              @reject="rejectUser"/>
                             </div>
                             <div class="py-8 text-center">
                                 There are no pending requests.
@@ -304,7 +303,7 @@ function onRoleChange(user, role) {
                             Photos
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            <GroupForm :form="aboutForm" />
+                            <GroupForm :form="aboutForm"/>
                             <PrimaryButton @click="updateGroup">
                                 Submit
                             </PrimaryButton>

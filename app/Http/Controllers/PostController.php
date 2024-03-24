@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Enums\ReactionEnum;
+use App\Http\Resources\PostResource;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\PostAttachment;
@@ -124,6 +125,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
+
         $id = Auth::id();
 
 
@@ -137,9 +139,24 @@ class PostController extends Controller
             return back();
         }
 
-        return response("You don't have permission to delete this post", 403);
+        return response("شما دست رسی به پاک کردن پست را ندارید ", 403);
     }
 
+
+    public function view(Post $post)
+    {
+        $post->loadCount('reactions');
+        $post->load([
+            'comments' => function ($query) {
+                $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
+                // SELECT COUNT(*) from reactions
+            },
+        ]);
+
+        return inertia('Post/View', [
+            'post' => new PostResource($post)
+        ]);
+    }
 
     public function downloadAttachment(PostAttachment $attachment)
     {
@@ -206,7 +223,7 @@ class PostController extends Controller
             }
             return response('', 204);
         }
-        return response("You don't have permission to delete this comment.", 403);
+        return response("شما دست رسی به پاک کردن پست را ندارید ", 403);
 
 
     }
