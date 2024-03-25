@@ -193,7 +193,7 @@ function followUser() {
                                 <p class="text-xs text-gray-500">{{ followerCount }} follower(s)</p>
                             </div>
 
-                            <div v-if="authUser.id !== user.id">
+                            <div v-if="!isMyProfile">
                                 <PrimaryButton v-if="!isCurrentUserFollower" @click="followUser">
                                     Follow User
                                 </PrimaryButton>
@@ -207,7 +207,7 @@ function followUser() {
             </div>
             <div class="border-t m-4 mt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white dark:bg-slate-950 dark:text-white">
+                    <TabList class="flex bg-white dark:bg-slate-950 dark:text-white ">
 
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="پست ها " :selected="selected"/>
