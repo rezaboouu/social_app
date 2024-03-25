@@ -27,15 +27,16 @@ function showCreatePostModal() {
 </script>
 
 <template>
-    <div @click="showCreatePostModal" class="py-2 px-3 border-2 border-gray-200 text-gray-500 rounded-md mb-3 w-full">
-       برای ساخت پست جدید کلیک کنید
-
+    <div class="p-4 bg-white dark:bg-slate-950 rounded-lg border dark:border-slate-900 mb-3">
+        <div @click="showCreatePostModal" class="py-2 px-3 border-2 border-gray-200 dark:border-slate-900 text-gray-500 rounded-md mb-3 w-full">
+            برای ساخت پست جدید کلیک کنید
+        </div>
 
     </div>
 
 
     <PostModal :post="newPost" :group="group" v-model="showModal"/>
-    
+
 </template>
 
 <style scoped>
