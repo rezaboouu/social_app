@@ -276,4 +276,76 @@ class PostController extends Controller
             'current_user_has_reaction' => $hasReaction
         ]);
     }
+    public function fetchUrlPreview(Request $request)
+    {
+        $data = $request->validate([
+            'url' => 'url'
+        ]);
+        $url = $data['url'];
+
+        $html = file_get_contents($url);
+
+        $dom = new \DOMDocument();
+
+        // Suppress warnings for malformed HTML
+        libxml_use_internal_errors(true);
+
+        // Load HTML content into the DOMDocument
+        $dom->loadHTML($html);
+
+        // Suppress warnings for malformed HTML
+        libxml_use_internal_errors(false);
+
+        $ogTags = [];
+        $metaTags = $dom->getElementsByTagName('meta');
+        foreach ($metaTags as $tag) {
+            $property = $tag->getAttribute('property');
+            if (str_starts_with($property, 'og:')) {
+                $ogTags[$property] = $tag->getAttribute('content');
+            }
+        }
+
+        return $ogTags;
+    }
+
+
+    public function pinUnpin(Request $request, Post $post)
+    {
+        $forGroup = $request->get('forGroup', false);
+        $group = $post->group;
+
+        if ($forGroup && !$group) {
+            return response("Invalid Request", 400);
+        }
+
+        if ($forGroup && !$group->isAdmin(Auth::id())) {
+            return response("You don't have permission to perform this action", 403);
+        }
+
+        $pinned = false;
+        if ($forGroup && $group->isAdmin(Auth::id())) {
+            if ($group->pinned_post_id === $post->id) {
+                $group->pinned_post_id = null;
+            } else {
+                $pinned = true;
+                $group->pinned_post_id = $post->id;
+            }
+            $group->save();
+        }
+
+        if (!$forGroup) {
+            $user = $request->user();
+            if ($user->pinned_post_id === $post->id) {
+                $user->pinned_post_id = null;
+            } else {
+                $pinned = true;
+                $user->pinned_post_id = $post->id;
+            }
+            $user->save();
+        }
+
+        return back()->with('success', 'Post was successfully ' . ( $pinned ? 'pinned' : 'unpinned' ));
+
+//        return response("You don't have permission to perform this action", 403);
+    }
 }

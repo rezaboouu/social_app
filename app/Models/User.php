@@ -27,6 +27,7 @@ class User extends Authenticatable
         'email',
         'cover_path',
         'avatar_path',
+        'pinned_post_id',
         'password',
     ];
 

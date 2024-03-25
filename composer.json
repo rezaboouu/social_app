@@ -14,7 +14,8 @@
         "laravel/tinker": "^2.8",
         "morilog/jalali": "^3.4",
         "spatie/laravel-sluggable": "^3.6",
-        "tightenco/ziggy": "^2.0"
+        "tightenco/ziggy": "^2.0",
+        "ext-dom": ""
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
