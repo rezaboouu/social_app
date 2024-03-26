@@ -148,8 +148,14 @@ class PostController extends Controller
     }
 
 
-    public function view(Post $post)
+    public function view(Request $request, Post $post)
     {
+        if ($post->group_id && !$post->group->hasApprovedUser(Auth::id())) {
+            return inertia('Error', [
+                'title' => 'Permission Denied',
+                'body' => "You don't have permission to view that post"
+            ])->toResponse($request)->setStatusCode(403);
+        }
         $post->loadCount('reactions');
         $post->load([
             'comments' => function ($query) {
@@ -222,11 +228,13 @@ class PostController extends Controller
         $post = $comment->post;
         $id = Auth::id();
         if ($comment->isOwner($id) || $post->isOwner($id)) {
+            $allComments = Comment::getAllChildrenComments($comment);
+            $deletedCommentCount = count($allComments);
             $comment->delete();
             if (!$comment->isOwner($id)) {
                 $comment->user->notify(new CommentDeleted($comment, $post));
             }
-            return response('', 204);
+            return response(['deleted' => $deletedCommentCount], 200);
         }
         return response("شما دست رسی به پاک کردن پست را ندارید ", 403);
 
